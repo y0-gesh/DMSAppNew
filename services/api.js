@@ -7,8 +7,12 @@ export async function generateOTP(mobile) {
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify({ mobile_number: mobile }),
   });
-  if (!res.ok) throw new Error('Failed to generate OTP');
-  return res.json();
+  if (!res.ok) {
+    const text = await res.text();
+    throw new Error(text || 'Failed to generate OTP');
+  }
+  // No need to parse JSON, assume success if OK
+  return;
 }
 
 export async function validateOTP(mobile, otp) {
@@ -17,7 +21,10 @@ export async function validateOTP(mobile, otp) {
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify({ mobile_number: mobile, otp }),
   });
-  if (!res.ok) throw new Error('Failed to validate OTP');
+  if (!res.ok) {
+    const text = await res.text();
+    throw new Error(text || 'Failed to validate OTP');
+  }
   return res.json();
 }
 
@@ -27,7 +34,10 @@ export async function getTags(term, token) {
     headers: { 'Content-Type': 'application/json', token },
     body: JSON.stringify({ term }),
   });
-  if (!res.ok) throw new Error('Failed to get tags');
+  if (!res.ok) {
+    const text = await res.text();
+    throw new Error(text || 'Failed to get tags');
+  }
   return res.json();
 }
 
@@ -40,7 +50,10 @@ export async function uploadDocument(file, data, token) {
     headers: { token },
     body: formData,
   });
-  if (!res.ok) throw new Error('Failed to upload');
+  if (!res.ok) {
+    const text = await res.text();
+    throw new Error(text || 'Failed to upload');
+  }
   return res.json();
 }
 
@@ -61,7 +74,10 @@ export async function searchDocuments(params, token) {
       search: { value: '' },
     }),
   });
-  if (!res.ok) throw new Error('Failed to search');
+  if (!res.ok) {
+    const text = await res.text();
+    throw new Error(text || 'Failed to search');
+  }
   const data = await res.json();
   return data.data || [];
 }
